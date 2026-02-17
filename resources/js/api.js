@@ -6,9 +6,21 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
+    withCredentials: true,
 });
 
 export default {
+    // Auth
+    login(credentials) {
+        return api.post('/auth/login', credentials);
+    },
+    logout() {
+        return api.post('/auth/logout');
+    },
+    getUser() {
+        return api.get('/auth/me');
+    },
+
     // Artisans
     searchArtisans(params) {
         return api.get('/artisans/search', { params });
