@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Artisan;
+use App\Models\User;
 use App\Services\TrustCalculatorService;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,6 +26,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('=== Hirfati Artisan Trust Platform - Database Seeding ===');
         $this->command->newLine();
+
+        // Create admin user
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@hirfati.ma'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+                'is_admin' => true,
+            ]
+        );
+        $this->command->info("Admin user created: admin@hirfati.ma / password");
 
         $this->call([
             ArtisanSeeder::class,

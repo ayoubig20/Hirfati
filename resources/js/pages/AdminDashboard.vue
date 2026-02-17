@@ -1,6 +1,9 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+  <div class="max-w-7xl mx-auto px-4 pt-24 pb-8">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+      <span class="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-semibold rounded-full">Admin Panel</span>
+    </div>
 
     <!-- Stats Overview -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

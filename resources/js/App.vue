@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-screen">
-    <!-- Navigation -->
+    <!-- Navigation (hidden on login page) -->
     <nav
+      v-if="!hideLayout"
       :class="[
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled ? 'nav-scrolled py-3' : 'bg-transparent py-5'
@@ -41,7 +42,9 @@
             >
               Find Artisans
             </router-link>
+            <!-- Admin link only visible to admins -->
             <router-link
+              v-if="isAdmin()"
               to="/admin"
               class="text-sm font-medium text-white/80 hover:text-amber-400 transition-colors"
               active-class="!text-amber-400"
@@ -50,14 +53,33 @@
             </router-link>
           </div>
 
-          <!-- CTA Button -->
-          <div class="hidden md:block">
-            <router-link
-              to="/search"
-              class="px-6 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/25"
-            >
-              Get Started
-            </router-link>
+          <!-- Right side buttons -->
+          <div class="hidden md:flex items-center gap-3">
+            <!-- Logged-in admin: show name + logout -->
+            <template v-if="isAuthenticated()">
+              <span class="text-sm text-amber-400 font-medium">{{ authState.user?.name }}</span>
+              <button
+                @click="handleLogout"
+                class="px-5 py-2 border border-white/30 text-white text-sm font-medium rounded-lg hover:bg-white/10 transition-all duration-300"
+              >
+                Logout
+              </button>
+            </template>
+            <!-- Not logged in: show login + get started -->
+            <template v-else>
+              <router-link
+                to="/login"
+                class="px-5 py-2 border border-white/30 text-white text-sm font-medium rounded-lg hover:bg-white/10 transition-all duration-300"
+              >
+                Admin Login
+              </router-link>
+              <router-link
+                to="/search"
+                class="px-6 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-all duration-300 shadow-lg shadow-amber-500/25"
+              >
+                Get Started
+              </router-link>
+            </template>
           </div>
 
           <!-- Mobile menu button -->
@@ -82,8 +104,20 @@
           <div class="flex flex-col gap-3">
             <router-link to="/" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Home</router-link>
             <router-link to="/search" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Find Artisans</router-link>
-            <router-link to="/admin" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Admin</router-link>
-            <router-link to="/search" class="mt-2 py-2.5 bg-amber-500 text-white text-center font-semibold rounded-lg" @click="mobileMenuOpen = false">Get Started</router-link>
+            <router-link v-if="isAdmin()" to="/admin" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Admin Dashboard</router-link>
+
+            <template v-if="isAuthenticated()">
+              <div class="border-t border-white/10 pt-3 mt-1">
+                <div class="text-amber-400 text-sm px-3 mb-2">{{ authState.user?.name }}</div>
+                <button @click="handleLogout(); mobileMenuOpen = false" class="w-full text-left text-white/80 hover:text-red-400 py-2 px-3 rounded-lg hover:bg-white/5 transition">Logout</button>
+              </div>
+            </template>
+            <template v-else>
+              <div class="border-t border-white/10 pt-3 mt-1">
+                <router-link to="/login" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition block" @click="mobileMenuOpen = false">Admin Login</router-link>
+              </div>
+              <router-link to="/search" class="mt-1 py-2.5 bg-amber-500 text-white text-center font-semibold rounded-lg" @click="mobileMenuOpen = false">Get Started</router-link>
+            </template>
           </div>
         </div>
       </div>
@@ -94,8 +128,8 @@
       <router-view />
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-[#1a1a2e] text-white">
+    <!-- Footer (hidden on login page) -->
+    <footer v-if="!hideLayout" class="bg-[#1a1a2e] text-white">
       <!-- Main footer -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -184,13 +218,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuth } from './composables/useAuth.js';
+
+const route = useRoute();
+const router = useRouter();
+const { state: authState, isAdmin, isAuthenticated, logout } = useAuth();
 
 const scrolled = ref(false);
 const mobileMenuOpen = ref(false);
 
+// Hide navbar and footer on login page
+const hideLayout = computed(() => route.meta?.hideLayout === true);
+
 function handleScroll() {
   scrolled.value = window.scrollY > 50;
+}
+
+async function handleLogout() {
+  await logout();
+  router.push('/');
 }
 
 onMounted(() => {
