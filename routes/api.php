@@ -25,8 +25,10 @@ Route::get('/trust/stats/{artisan_id}', [TrustController::class, 'stats']);
 // ─── Admin-only endpoints ───────────────────────────────────────
 Route::middleware(['auth', 'admin'])->group(function () {
     // Artisan management
+    Route::get('/artisans', [ArtisanController::class, 'index']);
     Route::post('/artisans', [ArtisanController::class, 'store']);
     Route::put('/artisans/{id}', [ArtisanController::class, 'update']);
+    Route::delete('/artisans/{id}', [ArtisanController::class, 'destroy']);
 
     // Order management
     Route::post('/orders', [OrderController::class, 'store']);

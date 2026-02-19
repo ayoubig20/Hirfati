@@ -84,6 +84,23 @@ class ArtisanController extends Controller
         return response()->json($artisan);
     }
 
+    public function index(Request $request): JsonResponse
+    {
+        $artisans = Artisan::with('trustCache')
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->input('per_page', 20));
+
+        return response()->json($artisans);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $artisan = Artisan::findOrFail($id);
+        $artisan->delete();
+
+        return response()->json(['message' => 'Artisan deleted successfully.']);
+    }
+
     public function featured(): JsonResponse
     {
         $featured = $this->recommendation->getFeatured();

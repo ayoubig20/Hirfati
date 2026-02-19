@@ -40,6 +40,12 @@ export default {
     updateArtisan(id, data) {
         return api.put(`/artisans/${id}`, data);
     },
+    deleteArtisan(id) {
+        return api.delete(`/artisans/${id}`);
+    },
+    getArtisans(params) {
+        return api.get('/artisans', { params });
+    },
 
     // Orders
     createOrder(data) {
