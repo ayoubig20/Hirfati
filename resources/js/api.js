@@ -46,6 +46,9 @@ export default {
     getArtisans(params) {
         return api.get('/artisans', { params });
     },
+    registerArtisan(data) {
+        return api.post('/artisans/register', data);
+    },
 
     // Orders
     createOrder(data) {

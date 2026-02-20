@@ -17,6 +17,7 @@ Route::get('/artisans/search', [ArtisanController::class, 'search']);
 Route::get('/artisans/featured', [ArtisanController::class, 'featured']);
 Route::get('/artisans/categories', [ArtisanController::class, 'categories']);
 Route::get('/artisans/{id}', [ArtisanController::class, 'show']);
+Route::post('/artisans/register', [ArtisanController::class, 'register']);
 Route::get('/artisans/{artisanId}/reviews', [ReviewController::class, 'artisanReviews']);
 Route::get('/artisans/{artisanId}/orders', [OrderController::class, 'artisanOrders']);
 Route::get('/orders/{id}', [OrderController::class, 'show']);

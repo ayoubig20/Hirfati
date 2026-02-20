@@ -42,6 +42,13 @@
             >
               Find Artisans
             </router-link>
+            <router-link
+              to="/register-artisan"
+              class="text-sm font-medium text-white/80 hover:text-amber-400 transition-colors"
+              active-class="!text-amber-400"
+            >
+              Become an Artisan
+            </router-link>
             <!-- Admin link only visible to admins -->
             <router-link
               v-if="isAdmin()"
@@ -104,6 +111,7 @@
           <div class="flex flex-col gap-3">
             <router-link to="/" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Home</router-link>
             <router-link to="/search" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Find Artisans</router-link>
+            <router-link to="/register-artisan" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Become an Artisan</router-link>
             <router-link v-if="isAdmin()" to="/admin" class="text-white/80 hover:text-amber-400 py-2 px-3 rounded-lg hover:bg-white/5 transition" @click="mobileMenuOpen = false">Admin Dashboard</router-link>
 
             <template v-if="isAuthenticated()">
@@ -165,6 +173,7 @@
             <ul class="space-y-3">
               <li><router-link to="/" class="text-gray-400 hover:text-amber-400 transition-colors text-sm">Home</router-link></li>
               <li><router-link to="/search" class="text-gray-400 hover:text-amber-400 transition-colors text-sm">Find Artisans</router-link></li>
+              <li><router-link to="/register-artisan" class="text-gray-400 hover:text-amber-400 transition-colors text-sm">Become an Artisan</router-link></li>
               <li><a href="#about" class="text-gray-400 hover:text-amber-400 transition-colors text-sm">About Us</a></li>
               <li><a href="#services" class="text-gray-400 hover:text-amber-400 transition-colors text-sm">Services</a></li>
             </ul>

@@ -101,6 +101,52 @@ class ArtisanController extends Controller
         return response()->json(['message' => 'Artisan deleted successfully.']);
     }
 
+    public function register(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:artisans,email',
+            'phone' => 'required|string|max:20',
+            'service_category' => 'required|string|max:100',
+            'specialty' => 'nullable|string|max:255',
+            'location' => 'required|string|max:255',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'bio' => 'nullable|string|max:1000',
+            'experience_years' => 'nullable|integer|min:0|max:50',
+            'services' => 'nullable|array|max:5',
+            'services.*.name' => 'required_with:services|string|max:255',
+            'services.*.description' => 'nullable|string|max:500',
+            'services.*.base_price' => 'nullable|numeric|min:0',
+            'services.*.duration_estimate' => 'nullable|integer|min:0',
+        ]);
+
+        $artisanData = collect($validated)->except(['bio', 'experience_years', 'services'])->toArray();
+        if (!empty($validated['experience_years'])) {
+            $base = $validated['specialty'] ?? $validated['service_category'];
+            $artisanData['specialty'] = $base . ' (' . $validated['experience_years'] . ' years experience)';
+        }
+
+        $artisan = Artisan::create($artisanData);
+
+        // Create services if provided
+        if (!empty($validated['services'])) {
+            foreach ($validated['services'] as $service) {
+                $artisan->services()->create([
+                    'category' => $validated['service_category'],
+                    'name' => $service['name'],
+                    'description' => $service['description'] ?? null,
+                    'base_price' => $service['base_price'] ?? null,
+                    'duration_estimate' => $service['duration_estimate'] ?? null,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Your profile has been created successfully!',
+            'artisan' => $artisan->load('services'),
+        ], 201);
+    }
+
     public function featured(): JsonResponse
     {
         $featured = $this->recommendation->getFeatured();

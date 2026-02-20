@@ -5,11 +5,13 @@ import SearchPage from './pages/SearchPage.vue';
 import ArtisanProfile from './pages/ArtisanProfile.vue';
 import AdminDashboard from './pages/AdminDashboard.vue';
 import LoginPage from './pages/LoginPage.vue';
+import ArtisanRegister from './pages/ArtisanRegister.vue';
 
 const routes = [
     { path: '/', name: 'home', component: HomePage },
     { path: '/search', name: 'search', component: SearchPage },
     { path: '/artisan/:id', name: 'artisan', component: ArtisanProfile, props: true },
+    { path: '/register-artisan', name: 'register-artisan', component: ArtisanRegister },
     {
         path: '/login',
         name: 'login',
