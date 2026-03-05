@@ -45,7 +45,7 @@ class RecommendationEngine
 
         switch ($sortBy) {
             case 'ranking':
-                $query->selectRaw('artisans.*, trust_score * LOG(1 + jobs_completed) as ranking_score')
+                $query->selectRaw('artisans.*, trust_score * LOG(1 + jobs_completed) * (COALESCE(avg_rating, 0) / 5.0) as ranking_score')
                       ->orderByDesc('ranking_score');
                 break;
             case 'rating':

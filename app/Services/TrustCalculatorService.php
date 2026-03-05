@@ -107,7 +107,7 @@ class TrustCalculatorService
         $orders = DB::table('orders')
             ->where('artisan_id', $artisanId)
             ->selectRaw("
-                COUNT(*) as accepted,
+                SUM(CASE WHEN status IN ('accepted','in_progress','completed','cancelled_by_artisan') THEN 1 ELSE 0 END) as accepted,
                 SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
             ")
             ->first();
@@ -188,7 +188,7 @@ class TrustCalculatorService
         return Artisan::where('service_category', $category)
             ->where('location', $location)
             ->where('status', 'active')
-            ->selectRaw('artisans.*, trust_score * LOG(1 + jobs_completed) as ranking_score')
+            ->selectRaw('artisans.*, trust_score * LOG(1 + jobs_completed) * (COALESCE(avg_rating, 0) / 5.0) as ranking_score')
             ->orderByDesc('ranking_score')
             ->limit($limit)
             ->get();
