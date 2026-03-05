@@ -318,6 +318,26 @@ class TrustCalculatorServiceTest extends TestCase
     }
 
     /** @test */
+    public function completion_excludes_pending_and_customer_cancelled_from_accepted(): void
+    {
+        $artisan = $this->createArtisan();
+        // 5 completed (count as both accepted and completed)
+        for ($i = 0; $i < 5; $i++) {
+            $this->createOrder($artisan, 'completed');
+        }
+        // 2 pending (should NOT count as accepted)
+        for ($i = 0; $i < 2; $i++) {
+            $this->createOrder($artisan, 'pending');
+        }
+        // 1 cancelled_by_customer (should NOT count as accepted)
+        $this->createOrder($artisan, 'cancelled_by_customer');
+        $result = $this->service->updateTrustScore($artisan->id);
+        // accepted = 5 (only completed ones), completed = 5
+        // S_c = 5/5 = 1.0
+        $this->assertEqualsWithDelta(1.0, $result['S_c'], 0.01);
+    }
+
+    /** @test */
     public function completion_component_is_a_ratio(): void
     {
         // 7 out of 10 = 0.7

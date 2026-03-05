@@ -37,7 +37,7 @@ RUN composer dump-autoload --optimize --no-dev
 # ============================================
 # Stage 3: Final application image
 # ============================================
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
